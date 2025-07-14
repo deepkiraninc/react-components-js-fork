@@ -35,7 +35,7 @@ pipeline{
                 echo "========executing deep-dev branch========"
                 sh '''pnpm install --no-frozen-lockfile'''
                 sh '''pnpm build'''
-                sh '''cd /home/jenkins/tlmeet-dev/livekit-react-core/
+                sh '''cd /home/ubuntu/tlmeet-dev/livekit-react-core/
                     sudo git stash
                     sudo git pull origin develop
                     sudo rm -rf *
@@ -43,7 +43,7 @@ pipeline{
                     sudo git add .
                     sudo git commit -m "Yarn built update from jenkins for core" || true
                     sudo git push origin develop'''
-                sh '''cd /home/jenkins/tlmeet-dev/livekit-react-components/
+                sh '''cd /home/ubuntu/tlmeet-dev/livekit-react-components/
                     sudo git stash
                     sudo git pull origin develop
                     sudo rm -rf *
