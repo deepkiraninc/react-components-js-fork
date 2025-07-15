@@ -16,6 +16,7 @@ import {
   useMaybeTrackRefContext,
 } from '../../context';
 import { FocusToggle } from '../controls/FocusToggle';
+// import { ExtendScreen } from '../controls/ExtendScreen';
 import { ParticipantPlaceholder } from '../../assets/images';
 import { LockLockedIcon, ScreenShareIcon } from '../../assets/icons';
 import { VideoTrack } from './VideoTrack';
@@ -140,8 +141,10 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
 
   }, [trackReference]);
 
+  const elementId = `participant_${trackReference.participant.identity}`;
+
   return (
-    <div ref={ref} style={{ position: 'relative' }} {...elementProps}>
+    <div ref={ref} id={elementId} style={{ position: 'relative' }} {...elementProps}>
       <TrackRefContextIfNeeded trackRef={trackReference}>
         <ParticipantContextIfNeeded participant={trackReference.participant}>
           {children ?? (
@@ -200,9 +203,10 @@ export const ParticipantTile = /* @__PURE__ */ React.forwardRef<
           )}
 
           {trackReference.publication?.trackName !== 'whiteboard' ? (
-            <FocusToggle trackRef={trackReference} />
+            <>
+              <FocusToggle trackRef={trackReference} />
+            </>
           ) : (<></>)}
-
         </ParticipantContextIfNeeded>
       </TrackRefContextIfNeeded>
     </div >

@@ -3,6 +3,7 @@ import * as React from 'react';
 import { BlurIndicater } from './BlurIndicater';
 import { Track } from 'livekit-client';
 import { WhiteboardIndicater } from './WhiteboardIndicater';
+import { FullscreenIndicator } from './FullscreenIndicator';
 
 /** @public */
 export interface ExtraOptionMenuProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -96,6 +97,9 @@ export function ExtraOptionMenu({
         style={{ visibility: isOpen ? 'visible' : 'hidden' }}
       >
         <ul className="lk-media-device-select lk-list" style={{ display: !showDropdown ? 'unset' : 'none' }}>
+          <li>
+            <FullscreenIndicator parentCallback={changeState} elementId='__next' />
+          </li>
           <li>
             <WhiteboardIndicater shareScreenTracks={shareScreenTracks} parentCallback={changeState} />
           </li>

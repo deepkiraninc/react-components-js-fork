@@ -9,6 +9,7 @@ import { WhiteboardState } from '../../context/whiteboard-context';
 export interface LayoutContextProviderProps {
   value?: LayoutContextType;
   onPinChange?: (state: PinState) => void;
+  onPinElementChange?: (state: PinState) => void;
   onWidgetChange?: (state: WidgetState) => void;
   onWhiteboardChange?: (state: WhiteboardState) => void;
 }
@@ -17,6 +18,7 @@ export interface LayoutContextProviderProps {
 export function LayoutContextProvider({
   value,
   onPinChange,
+  onPinElementChange,
   onWidgetChange,
   onWhiteboardChange,
   children,
@@ -27,6 +29,11 @@ export function LayoutContextProvider({
     log.debug('PinState Updated', { state: layoutContextValue.pin.state });
     if (onPinChange && layoutContextValue.pin.state) onPinChange(layoutContextValue.pin.state);
   }, [layoutContextValue.pin.state, onPinChange]);
+
+  React.useEffect(() => {
+    log.debug('PinElementState Updated', { state: layoutContextValue.pinElement.state });
+    if (onPinElementChange && layoutContextValue.pinElement.state) onPinElementChange(layoutContextValue.pinElement.state);
+  }, [layoutContextValue.pinElement.state, onPinElementChange]);
 
   React.useEffect(() => {
     log.debug('Chat Widget Updated', { widgetState: layoutContextValue.widget.state });

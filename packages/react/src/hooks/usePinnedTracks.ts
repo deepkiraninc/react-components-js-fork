@@ -22,3 +22,13 @@ export function usePinnedTracks(layoutContext?: LayoutContextType): TrackReferen
     return [];
   }, [layoutContext.pin.state]);
 }
+
+export function usePinnedElementTracks(layoutContext?: LayoutContextType): TrackReferenceOrPlaceholder[] {
+  layoutContext = useEnsureLayoutContext(layoutContext);
+  return React.useMemo(() => {
+    if (layoutContext?.pinElement.state !== undefined && layoutContext.pinElement.state.length >= 1) {
+      return layoutContext.pinElement.state;
+    }
+    return [];
+  }, [layoutContext.pinElement.state]);
+}

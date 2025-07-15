@@ -4,11 +4,13 @@ import type { PinContextType } from './pin-context';
 import type { WidgetContextType } from './chat-context';
 import { chatReducer } from './chat-context';
 import { pinReducer } from './pin-context';
+import { PinElementContextType, pinElementReducer } from './pin-element-context';
 import { WHITEBOARD_DEFAULT_STATE, WhiteboardContextType, whiteboardReducer } from './whiteboard-context';
 
 /** @public */
 export type LayoutContextType = {
   pin: PinContextType;
+  pinElement: PinElementContextType;
   widget: WidgetContextType;
   whiteboard: WhiteboardContextType;
 };
@@ -46,11 +48,13 @@ export function useEnsureLayoutContext(layoutContext?: LayoutContextType) {
 /** @public */
 export function useCreateLayoutContext(): LayoutContextType {
   const [pinState, pinDispatch] = React.useReducer(pinReducer, PIN_DEFAULT_STATE);
+  const [pinElementState, pinElementDispatch] = React.useReducer(pinElementReducer, PIN_DEFAULT_STATE);
   const [widgetState, widgetDispatch] = React.useReducer(chatReducer, WIDGET_DEFAULT_STATE);
   const [whiteboardState, whiteboardDispatch] = React.useReducer(whiteboardReducer, WHITEBOARD_DEFAULT_STATE);
   
   return {
     pin: { dispatch: pinDispatch, state: pinState },
+    pinElement: { dispatch: pinElementDispatch, state: pinElementState },
     widget: { dispatch: widgetDispatch, state: widgetState },
     whiteboard: { dispatch: whiteboardDispatch, state: whiteboardState },
   };
@@ -59,12 +63,14 @@ export function useCreateLayoutContext(): LayoutContextType {
 /** @public */
 export function useEnsureCreateLayoutContext(layoutContext?: LayoutContextType): LayoutContextType {
   const [pinState, pinDispatch] = React.useReducer(pinReducer, PIN_DEFAULT_STATE);
+  const [pinElementState, pinElementDispatch] = React.useReducer(pinElementReducer, PIN_DEFAULT_STATE);
   const [widgetState, widgetDispatch] = React.useReducer(chatReducer, WIDGET_DEFAULT_STATE);
   const [whiteboardState, whiteboardDispatch] = React.useReducer(whiteboardReducer, WHITEBOARD_DEFAULT_STATE);
   
   return (
     layoutContext ?? {
       pin: { dispatch: pinDispatch, state: pinState },
+      pinElement: { dispatch: pinElementDispatch, state: pinElementState },
       widget: { dispatch: widgetDispatch, state: widgetState },
       whiteboard: { dispatch: whiteboardDispatch, state: whiteboardState },
     }

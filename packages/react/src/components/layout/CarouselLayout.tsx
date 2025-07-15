@@ -75,6 +75,6 @@ export function CarouselLayout({ tracks, orientation, ...props }: CarouselLayout
   return (
     <aside key={carouselOrientation} className="lk-carousel" ref={asideEl} {...props}>
       <TrackLoop tracks={sortedTiles}>{props.children}</TrackLoop>
-    </aside>
+    </aside >
   );
 }

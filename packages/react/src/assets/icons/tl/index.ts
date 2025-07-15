@@ -7,4 +7,6 @@ export { default as ApproveIcon } from './ApproveIcon';
 export { default as RejectIcon } from './RejectIcon';
 export { default as InviteIcon } from './InviteIcon';
 export { default as UsersIcon } from './UsersIcon';
+export { default as FullScreen } from './FullScreen';
+export { default as ExitFullScreen } from './ExitFullScreen';
 

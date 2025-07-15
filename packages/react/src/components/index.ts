@@ -4,6 +4,7 @@ export * from './controls/ChatToggle';
 export * from './controls/ShareLinkToggle';
 export * from './controls/DisconnectButton';
 export * from './controls/FocusToggle';
+export * from './controls/ExtendScreen';
 export * from './controls/MediaDeviceSelect';
 export * from './controls/StartAudio';
 export * from './controls/TrackToggle';

@@ -20,6 +20,9 @@ import { ExtraOptionMenu } from './ExtraOptionMenu';
 import { useWhiteboard } from '../hooks/useWhiteboard';
 import { StartMediaButton } from '../components/controls/StartMediaButton';
 import { SettingsMenuToggle } from '../components/controls/SettingsMenuToggle';
+import RecordingControls from './Recording';
+import RecordingIndicator from './RecordingIndicator';
+import { useRoomContext } from '../context/room-context';
 
 /** @public */
 export type ControlBarControls = {
@@ -76,6 +79,26 @@ export function ControlBar({
   const [isChatOpen, setIsChatOpen] = React.useState(false);
   const [isShareLinkOpen, setIsShareLinkOpen] = React.useState(false);
   const [isUserOpen, setIsUserOpen] = React.useState(false);
+  const [isRecording, setIsRecording] = React.useState(false);
+  const [recordingStartTime, setRecordingStartTime] = React.useState<string | null>(null);
+  const room = useRoomContext();
+  React.useEffect(() => {
+    if (room?.metadata) {
+      try {
+        const parsed = JSON.parse(room.metadata);
+        const recordingActive = parsed.recordingStarted === true;
+        setIsRecording(recordingActive);
+        if (recordingActive && parsed.recording_start_time) {
+          setRecordingStartTime(parsed.recording_start_time);
+        } else {
+          setRecordingStartTime(null);
+        }
+      } catch (err) {
+        console.error('Failed to parse room metadata:', err);
+      }
+    }
+  }, [room?.metadata]);
+
   const { state } = useLayoutContext().widget;
 
   React.useEffect(() => {
@@ -126,6 +149,10 @@ export function ControlBar({
     [variation],
   );
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const isHost = urlParams.has('authcode');
+  const isMeeting =
+    window.location.pathname.includes('join') || window.location.pathname.includes('start');
   const browserSupportsScreenSharing = supportsScreenSharing();
 
   const [isScreenShareEnabled, setIsScreenShareEnabled] = React.useState(false);
@@ -274,6 +301,12 @@ export function ControlBar({
           )}
         </ChatToggle>
       )}
+      {isHost && isMeeting && (visibleControls.sharelink || visibleControls.users) && (
+        <RecordingControls onRecordingChange={(val) => setIsRecording(val)} />
+      )}
+      {isMeeting && isRecording && recordingStartTime && (
+        <RecordingIndicator recordingStartTime={recordingStartTime} />
+      )}
       {visibleControls.sharelink && (
         <ShareLinkToggle>
           {showIcon && <SvgInviteIcon />}
@@ -318,7 +351,6 @@ export function ControlBar({
           {showText && 'Settings'}
         </SettingsMenuToggle>
       )}
-
       <StartMediaButton />
     </div>
   );

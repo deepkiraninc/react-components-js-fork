@@ -15,6 +15,7 @@ export {
   useParticipantContext,
 } from './participant-context';
 export {} from './pin-context';
+export {} from './pin-element-context';
 export { RoomContext, useEnsureRoom, useMaybeRoomContext, useRoomContext } from './room-context';
 export {
   TrackRefContext,

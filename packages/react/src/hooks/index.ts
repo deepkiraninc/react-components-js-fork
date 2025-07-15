@@ -25,7 +25,7 @@ export {
 } from './useParticipantPermissions';
 export { UseParticipantTileProps, useParticipantTile } from './useParticipantTile';
 export { UseParticipantsOptions, useParticipants } from './useParticipants';
-export { usePinnedTracks } from './usePinnedTracks';
+export { usePinnedTracks, usePinnedElementTracks } from './usePinnedTracks';
 export { UseRemoteParticipantOptions, useRemoteParticipant } from './useRemoteParticipant';
 export { UseRemoteParticipantsOptions, useRemoteParticipants } from './useRemoteParticipants';
 export { UseRoomInfoOptions, useRoomInfo } from './useRoomInfo';

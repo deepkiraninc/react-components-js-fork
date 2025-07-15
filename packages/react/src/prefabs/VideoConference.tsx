@@ -11,6 +11,7 @@ import type { MessageFormatter } from '../components';
 import {
   CarouselLayout,
   ConnectionStateToast,
+  ExtendScreen,
   FocusLayout,
   FocusLayoutContainer,
   GridLayout,
@@ -20,7 +21,7 @@ import {
   formatChatMessageLinks
 } from '../components';
 import { useCreateLayoutContext, useEnsureParticipant, useRoomContext } from '../context';
-import { useLocalParticipant, usePinnedTracks, useTracks, useWhiteboard } from '../hooks';
+import { useLocalParticipant, usePinnedElementTracks, usePinnedTracks, useTracks, useWhiteboard } from '../hooks';
 import { Chat } from './Chat';
 import { ControlBar } from './ControlBar';
 import { Users } from './Users';
@@ -141,7 +142,8 @@ export function VideoConference({
   }
 
   const focusTrack = usePinnedTracks(layoutContext)?.[0];
-  const carouselTracks = tracks.filter((track) => !isEqualTrackRef(track, focusTrack));
+  const focusElementTrack = usePinnedElementTracks(layoutContext)?.[0];
+  const carouselTracks = tracks.filter((track) => !isEqualTrackRef(track, focusTrack) && !isEqualTrackRef(track, focusElementTrack));
 
   React.useEffect(() => {
     if (meta && meta.host) {
@@ -198,6 +200,7 @@ export function VideoConference({
       .map((ref) => `${ref.publication.trackSid}_${ref.publication.isSubscribed}`)
       .join(),
     focusTrack?.publication?.trackSid,
+    focusElementTrack?.publication?.trackSid,
   ]);
 
   const room = useRoomContext();
@@ -251,7 +254,7 @@ export function VideoConference({
           onWhiteboardChange={whiteboardUpdate}
         >
           <div className="lk-video-conference-inner">
-            {!focusTrack ? (
+            {!focusTrack && !focusElementTrack ? (
               <div className="lk-grid-layout-wrapper">
                 <GridLayout tracks={tracks}>
                   <ParticipantTile />
@@ -259,11 +262,13 @@ export function VideoConference({
               </div>
             ) : (
               <div className="lk-focus-layout-wrapper">
-                <FocusLayoutContainer>
+                <FocusLayoutContainer className={focusElementTrack ? 'lk-focus-layout-extended' : ''}>
+                  <ExtendScreen />
                   <CarouselLayout tracks={carouselTracks}>
                     <ParticipantTile />
                   </CarouselLayout>
                   {focusTrack && <FocusLayout trackRef={focusTrack} />}
+                  {focusElementTrack && <FocusLayout trackRef={focusElementTrack} />}
                 </FocusLayoutContainer>
               </div>
             )}
@@ -306,21 +311,13 @@ export function VideoConference({
             ) : (<></>)
           }
 
-          {/* {
-            waiting ? (
-              <Toast className="lk-toast-connection-state">
-                <UserToggle>{waiting}</UserToggle>
-              </Toast>
-            ) : (
-              <></>
-            )
-          } */}
           <Chat
             style={{ display: widgetState.showChat == 'show_chat' ? 'flex' : 'none' }}
             messageFormatter={formatChatMessageLinks}
             messageEncoder={chatMessageEncoder}
             messageDecoder={chatMessageDecoder}
           />
+
           {
             SettingsComponent && (
               <div
