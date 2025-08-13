@@ -63,11 +63,6 @@ export default function RecordingControls({ onRecordingChange }: RecordingContro
     const meetingId = getMeetingId();
     const authCode = getAuthCode();
 
-    if (!meetingId || !authCode) {
-      alert('Meeting ID or Authorization code not found');
-      return;
-    }
-
     setIsLoading(true);
     setIsOpen(false);
 
