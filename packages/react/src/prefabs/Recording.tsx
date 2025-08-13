@@ -20,11 +20,6 @@ export default function RecordingControls({ onRecordingChange }: RecordingContro
     return pathParts[2] || null;
   };
 
-  const getAuthCode = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('authcode');
-  };
-
   useEffect(() => {
     if (room?.metadata) {
       try {
