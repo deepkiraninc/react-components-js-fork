@@ -61,7 +61,6 @@ export default function RecordingControls({ onRecordingChange }: RecordingContro
 
   const handleRecording = async (action: string, type?: string) => {
     const meetingId = getMeetingId();
-    const authCode = getAuthCode();
 
     setIsLoading(true);
     setIsOpen(false);
@@ -71,8 +70,7 @@ export default function RecordingControls({ onRecordingChange }: RecordingContro
         action === 'stop' ? `/api/stop/${meetingId}` : `/api/start/${meetingId}`;
 
       const fetchOptions: RequestInit = {
-        method: 'POST',
-        headers: { authorization: authCode },
+        method: 'POST'
       };
 
       if (type === 'image') {
