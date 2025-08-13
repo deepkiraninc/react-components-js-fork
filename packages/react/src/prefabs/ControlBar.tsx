@@ -149,8 +149,6 @@ export function ControlBar({
     [variation],
   );
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const isHost = urlParams.has('authcode');
   const isMeeting =
     window.location.pathname.includes('join') || window.location.pathname.includes('start');
   const browserSupportsScreenSharing = supportsScreenSharing();
@@ -301,7 +299,7 @@ export function ControlBar({
           )}
         </ChatToggle>
       )}
-      {isHost && isMeeting && (visibleControls.sharelink || visibleControls.users) && (
+      {isMeeting && visibleControls.users && (
         <RecordingControls onRecordingChange={(val) => setIsRecording(val)} />
       )}
       {isMeeting && isRecording && recordingStartTime && (
