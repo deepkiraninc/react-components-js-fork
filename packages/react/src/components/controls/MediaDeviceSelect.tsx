@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useMaybeRoomContext } from '../../context';
 import { mergeProps } from '../../utils';
-import { RoomEvent, type LocalAudioTrack, type LocalVideoTrack } from 'livekit-client';
+import { Track, RoomEvent, type LocalAudioTrack, type LocalVideoTrack } from 'livekit-client';
 import { useMediaDeviceSelect } from '../../hooks';
 
 /** @public */
@@ -99,9 +99,61 @@ export const MediaDeviceSelect = /* @__PURE__ */ React.forwardRef<
     }
   }, [activeDeviceId]);
 
-  const handleActiveDeviceChange = async (deviceId: string) => {
+
+  // ********************** Changes made to fix the bug of microphone not changing on selection ********************** //
+
+  // ********************** Old Code ********************** //
+  // const handleActiveDeviceChange = async (deviceId: string) => {
+  //   try {
+  //     await setActiveMediaDevice(deviceId, { exact: exactMatch });
+  //   } catch (e) {
+  //     if (e instanceof Error) {
+  //       onDeviceSelectError?.(e);
+  //     } else {
+  //       throw e;
+  //     }
+  //   }
+  // };
+
+
+  // ********************** New Code ********************** //
+  const handleActiveDeviceChange = async (deviceId: string) =>  {
+
     try {
-      await setActiveMediaDevice(deviceId, { exact: exactMatch });
+      // For audio input devices, disconnect and restart the track only if enabled
+      if (kind === 'audioinput' && room) {
+        // Store the current microphone state before switching
+        const wasMicrophoneEnabled = room.localParticipant.isMicrophoneEnabled;
+        const currentAudioTrack = room.localParticipant.getTrackPublication(
+          Track.Source.Microphone,
+        )?.track as LocalAudioTrack | undefined;
+
+        // Only disconnect/restart if microphone was enabled
+        if (wasMicrophoneEnabled && currentAudioTrack) {
+          // Disable microphone to unpublish the current track
+          await room.localParticipant.setMicrophoneEnabled(false);
+
+          // Small delay to ensure cleanup
+          await new Promise((resolve) => setTimeout(resolve, 100));
+
+          // Switch to the new device
+          await setActiveMediaDevice(deviceId, { exact: exactMatch });
+
+          // Re-enable microphone with the new device
+          await room.localParticipant.setMicrophoneEnabled(true);
+        } else {
+          // Microphone was disabled, just switch the device without enabling
+          await setActiveMediaDevice(deviceId, { exact: exactMatch });
+
+          // Ensure microphone stays disabled (in case switchActiveDevice enabled it)
+          if (room.localParticipant.isMicrophoneEnabled) {
+            await room.localParticipant.setMicrophoneEnabled(false);
+          }
+        }
+      } else {
+        // For other device types, use the standard switch
+        await setActiveMediaDevice(deviceId, { exact: exactMatch });
+      }
     } catch (e) {
       if (e instanceof Error) {
         onDeviceSelectError?.(e);
@@ -110,6 +162,8 @@ export const MediaDeviceSelect = /* @__PURE__ */ React.forwardRef<
       }
     }
   };
+
+
   // Merge Props
   const mergedProps = React.useMemo(
     () => mergeProps(props, { className }, { className: 'lk-list' }),
